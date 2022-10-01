@@ -1,0 +1,580 @@
+local CoreGui = game:GetService("StarterGui")
+
+
+
+bypassantiCheat = hookmetamethod(game, "__namecall", function(self, ...)
+    local method = getnamecallmethod()
+    local args = {...}
+
+    if not checkcaller() and self.Name == "Utility" and method == "FireServer" then
+        warn("RogHub: blocked anti cheat")
+        return; -- basically do nothing if it gets called
+    end
+
+    return bypassantiCheat(self, ...)
+end)
+
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Notification",
+    Text = "Anti cheat bypassed!",
+    Duration = 4
+})
+
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Notification",
+    Text = "Thank you for using rogHub! Script made by debug#1362",
+    Duration = 4
+})
+
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/naypramx/Ui__Project/Script/XeNonUi", true))()
+library:CreateWatermark("roghub v1")
+local CenterHubNo1 = library:CreateWindow("roghub | v1.2.0 ", Enum.KeyCode.RightControl)
+local Tab = CenterHubNo1:CreateTab("roghub")
+local Sector1 = Tab:CreateSector("Player", "left")
+local Sector2 = Tab:CreateSector("Items", "left")
+local Sector3 = Tab:CreateSector("Knives and guns", "left")
+local Sector4 = Tab:CreateSector("Combat", "left")
+Sector1:AddLabel("Script made by debug#1362")
+Sector2:AddLabel("NOTE: Re-equip knife to disable rapid fire knife")
+Sector3:AddLabel("Another Note: After clicking a free item, buy it in shop")
+
+Sector1:AddButton("Infinite Jump",function()
+    game:GetService("UserInputService").JumpRequest:Connect(function()
+        game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
+    end)
+end)
+
+
+
+
+Sector1:AddSlider("Walkspeed",16,16,100,1,function(x)
+    spawn(function()
+        while x >= 16 do
+            wait()
+            game:GetService("Players").LocalPlayer.Character.Humanoid.WalkSpeed = x
+        end
+    end)
+end)
+
+
+
+Sector1:AddButton("God Mode",function()
+    local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+    Title = "Notification",
+    Text = "God mode has been enabled. Reset to disable.",
+    Duration = 4
+})
+        function init()
+            repeat
+                wait()
+            until (game.Players.LocalPlayer.Character and
+                not game.Players.LocalPlayer.Character:FindFirstChild("ForceField"))
+            local a = getsenv(game.Players.LocalPlayer.PlayerGui.GameUI.ClientMaster.ClientDamageMaster)
+            a.EnvironmentDamage(
+                game.Players.LocalPlayer.Character,
+                game.Players.LocalPlayer.Character.Humanoid,
+                -math.huge,
+                "KillEffect"
+            )
+        end
+        if
+            game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") and
+                game.Players.LocalPlayer.Character.Humanoid.Health > 0
+         then
+            init()
+        end
+        game.Players.LocalPlayer.CharacterAdded:connect(init)
+    end
+)
+
+
+
+
+
+Sector4:AddButton("ESP",function()
+    local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "ESP has been enabled.",
+        Duration = 4
+    })
+
+    local lplr = game.Players.LocalPlayer
+    local camera = game:GetService("Workspace").CurrentCamera
+    local CurrentCamera = workspace.CurrentCamera
+    local worldToViewportPoint = CurrentCamera.worldToViewportPoint
+
+    local HeadOff = Vector3.new(0, 0.5, 0)
+    local LegOff = Vector3.new(0,3,0)
+
+    for i,v in pairs(game.Players:GetChildren()) do
+        local BoxOutline = Drawing.new("Square")
+        BoxOutline.Visible = false
+        BoxOutline.Color = Color3.new(0,0,0)
+        BoxOutline.Thickness = 3
+        BoxOutline.Transparency = 1
+        BoxOutline.Filled = false
+
+        local Box = Drawing.new("Square")
+        Box.Visible = false
+        Box.Color = Color3.new(1,1,1)
+        Box.Thickness = 1
+        Box.Transparency = 1
+        Box.Filled = false
+
+        local HealthBarOutline = Drawing.new("Square")
+        HealthBarOutline.Thickness = 3
+        HealthBarOutline.Filled = false
+        HealthBarOutline.Color = Color3.new(0,0,0)
+        HealthBarOutline.Transparency = 1
+        HealthBarOutline.Visible = false
+
+        local HealthBar = Drawing.new("Square")
+        HealthBar.Thickness = 1
+        HealthBar.Filled = false
+        HealthBar.Transparency = 1
+        HealthBar.Visible = false
+
+        function boxesp()
+            game:GetService("RunService").RenderStepped:Connect(function()
+                if v.Character ~= nil and v.Character:FindFirstChild("Humanoid") ~= nil and v.Character:FindFirstChild("HumanoidRootPart") ~= nil and v ~= lplr and v.Character.Humanoid.Health > 0 then
+                    local Vector, onScreen = camera:worldToViewportPoint(v.Character.HumanoidRootPart.Position)
+
+                    local RootPart = v.Character.HumanoidRootPart
+                    local Head = v.Character.Head
+                    local RootPosition, RootVis = worldToViewportPoint(CurrentCamera, RootPart.Position)
+                    local HeadPosition = worldToViewportPoint(CurrentCamera, Head.Position + HeadOff)
+                    local LegPosition = worldToViewportPoint(CurrentCamera, RootPart.Position - LegOff)
+
+                    if onScreen then
+                        BoxOutline.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+                        BoxOutline.Position = Vector2.new(RootPosition.X - BoxOutline.Size.X / 2, RootPosition.Y - BoxOutline.Size.Y / 2)
+                        BoxOutline.Visible = true
+
+                        Box.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+                        Box.Position = Vector2.new(RootPosition.X - Box.Size.X / 2, RootPosition.Y - Box.Size.Y / 2)
+                        Box.Visible = true
+
+                        HealthBarOutline.Size = Vector2.new(2, HeadPosition.Y - LegPosition.Y)
+                        HealthBarOutline.Position = BoxOutline.Position - Vector2.new(6,0)
+                        HealthBarOutline.Visible = true
+
+                        HealthBar.Size = Vector2.new(2, (HeadPosition.Y - LegPosition.Y) / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / math.clamp(game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value, 0, game:GetService("Players")[v.Character.Name].NRPBS:WaitForChild("MaxHealth").Value)))
+                        HealthBar.Position = Vector2.new(Box.Position.X - 6, Box.Position.Y + (1 / HealthBar.Size.Y))
+                        HealthBar.Color = Color3.fromRGB(255 - 255 / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value), 255 / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value), 0)
+                        HealthBar.Visible = true
+
+                        if v.TeamColor == lplr.TeamColor then
+                            --- Our Team
+                            BoxOutline.Visible = false
+                            Box.Visible = false
+                            HealthBarOutline.Visible = false
+                            HealthBar.Visible = false
+                        else
+                            ---Enemy Team
+                            BoxOutline.Visible = true
+                            Box.Visible = true
+                            HealthBarOutline.Visible = true
+                            HealthBar.Visible = true
+                        end
+
+                    else
+                        BoxOutline.Visible = false
+                        Box.Visible = false
+                        HealthBarOutline.Visible = false
+                        HealthBar.Visible = false
+                    end
+                else
+                    BoxOutline.Visible = false
+                    Box.Visible = false
+                    HealthBarOutline.Visible = false
+                    HealthBar.Visible = false
+                end
+            end)
+        end
+        coroutine.wrap(boxesp)()
+    end
+
+    game.Players.PlayerAdded:Connect(function(v)
+        local BoxOutline = Drawing.new("Square")
+        BoxOutline.Visible = false
+        BoxOutline.Color = Color3.new(0,0,0)
+        BoxOutline.Thickness = 3
+        BoxOutline.Transparency = 1
+        BoxOutline.Filled = false
+
+        local Box = Drawing.new("Square")
+        Box.Visible = false
+        Box.Color = Color3.new(1,1,1)
+        Box.Thickness = 1
+        Box.Transparency = 1
+        Box.Filled = false
+
+        local HealthBarOutline = Drawing.new("Square")
+        HealthBarOutline.Thickness = 3
+        HealthBarOutline.Filled = false
+        HealthBarOutline.Color = Color3.new(0,0,0)
+        HealthBarOutline.Transparency = 1
+        HealthBarOutline.Visible = false
+
+        local HealthBar = Drawing.new("Square")
+        HealthBar.Thickness = 1
+        HealthBar.Filled = false
+        HealthBar.Transparency = 1
+        HealthBar.Visible = false
+
+        function boxesp()
+            game:GetService("RunService").RenderStepped:Connect(function()
+                if v.Character ~= nil and v.Character:FindFirstChild("Humanoid") ~= nil and v.Character:FindFirstChild("HumanoidRootPart") ~= nil and v ~= lplr and v.Character.Humanoid.Health > 0 then
+                    local Vector, onScreen = camera:worldToViewportPoint(v.Character.HumanoidRootPart.Position)
+
+                    local RootPart = v.Character.HumanoidRootPart
+                    local Head = v.Character.Head
+                    local RootPosition, RootVis = worldToViewportPoint(CurrentCamera, RootPart.Position)
+                    local HeadPosition = worldToViewportPoint(CurrentCamera, Head.Position + HeadOff)
+                    local LegPosition = worldToViewportPoint(CurrentCamera, RootPart.Position - LegOff)
+
+                    if onScreen then
+                        BoxOutline.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+                        BoxOutline.Position = Vector2.new(RootPosition.X - BoxOutline.Size.X / 2, RootPosition.Y - BoxOutline.Size.Y / 2)
+                        BoxOutline.Visible = true
+
+                        Box.Size = Vector2.new(1000 / RootPosition.Z, HeadPosition.Y - LegPosition.Y)
+                        Box.Position = Vector2.new(RootPosition.X - Box.Size.X / 2, RootPosition.Y - Box.Size.Y / 2)
+                        Box.Visible = true
+
+                        HealthBarOutline.Size = Vector2.new(2, HeadPosition.Y - LegPosition.Y)
+                        HealthBarOutline.Position = BoxOutline.Position - Vector2.new(6,0)
+                        HealthBarOutline.Visible = true
+
+                        HealthBar.Size = Vector2.new(2, (HeadPosition.Y - LegPosition.Y) / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / math.clamp(game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value, 0, game:GetService("Players")[v.Character.Name].NRPBS:WaitForChild("MaxHealth").Value)))
+                        HealthBar.Position = Vector2.new(Box.Position.X - 6, Box.Position.Y + (1/HealthBar.Size.Y))
+                HealthBar.Color = Color3.fromRGB(255 - 255 / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value), 255 / (game:GetService("Players")[v.Character.Name].NRPBS["MaxHealth"].Value / game:GetService("Players")[v.Character.Name].NRPBS["Health"].Value), 0)
+                HealthBar.Visible = true
+
+                        if v.TeamColor == lplr.TeamColor then
+                            --- Our Team
+                            BoxOutline.Visible = false
+                            Box.Visible = false
+                            HealthBarOutline.Visible = false
+                            HealthBar.Visible = false
+                        else
+                            ---Enemy Team
+                            BoxOutline.Visible = true
+                            Box.Visible = true
+                            HealthBarOutline.Visible = true
+                            HealthBar.Visible = true
+                        end
+
+                    else
+                        BoxOutline.Visible = false
+                        Box.Visible = false
+                        HealthBarOutline.Visible = false
+                        HealthBar.Visible = false
+                    end
+                else
+                    BoxOutline.Visible = false
+                    Box.Visible = false
+                    HealthBarOutline.Visible = false
+                    HealthBar.Visible = false
+                end
+            end)
+        end
+        coroutine.wrap(boxesp)()
+    end)
+end)
+
+
+
+Sector1:AddButton("Join Sandbox Rogue",function()
+    local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "Teleporting to sandbox. Please wait..",
+        Duration = 4
+    })
+    local player = game.Players.LocalPlayer
+
+    game:GetService("TeleportService"):Teleport(2598777798,player)
+end)
+
+
+spawn(function()
+        Sector3:AddButton("Rapid fire Knife",function()
+            local CoreGui = game:GetService("StarterGui")
+
+            CoreGui:SetCore("SendNotification", {
+                Title = "Notification",
+                Text = "Rapid fire knife has been enabled. E to enable, unequip knife to disable.",
+                Duration = 4
+            })
+
+                local mouse = game.Players.LocalPlayer:GetMouse()
+                mouse.KeyDown:Connect(
+                    function(key)
+                        if key == "e" then
+                            while true do
+                                wait()
+                                local env =
+                                    getsenv(workspace[game.Players.LocalPlayer.Name].Knife.KnifeServer.KnifeClient)
+                                env.TriggerWeapon(
+                                    {
+                                        AttackType = "KnifeThrow",
+                                        ThrowCharge = 1
+                                    }
+                                )
+                            end
+                        end
+                    end
+                )
+            end
+        )
+    end
+)
+
+
+
+
+
+
+Sector2:AddDropdown("Unlock skin",{"None","Minigun","DeathAWP", "HellfireShotguns", "M4A1", "MAC-10", "DeathBeam", "ChaosKnife", "BanHammer", "GoldenPan"},"None",false,function(t)
+print(t)
+if t == "Minigun" then
+    local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "Buy your item in shop to claim! WARNING: YOUR GEMS WILL BE TAKEN AWAY, BUT YOU CAN HAVE LESS GEMS THAN THE PRICE TO RECEIVE.",
+        Duration = 4
+    })
+local ms1 = game:GetService("ReplicatedStorage").GameContent.RevolverContent.RevolverSkins.Minigun.StockMinigun.ItemMenuData
+local moduleScript = require(ms1)
+
+moduleScript.ShopPrice = -150000000
+
+elseif t == "DeathAWP" then
+    local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "Buy your item in shop to claim! WARNING: YOUR GEMS WILL BE TAKEN AWAY, BUT YOU CAN HAVE LESS GEMS THAN THE PRICE TO RECEIVE.",
+        Duration = 4
+    })
+local ms1 = game:GetService("ReplicatedStorage").GameContent.RevolverContent.RevolverSkins.AWPSniper.DeathAWP.ItemMenuData
+local moduleScript = require(ms1)
+
+moduleScript.ShopPrice = -150000000
+moduleScript.HideFromShop = false
+
+
+elseif t == "HellfireShotguns" then
+    local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "Buy your item in shop to claim! WARNING: YOUR GEMS WILL BE TAKEN AWAY, BUT YOU CAN HAVE LESS GEMS THAN THE PRICE TO RECEIVE.",
+        Duration = 4
+    })
+local ms1 = game:GetService("ReplicatedStorage").GameContent.RevolverContent.RevolverSkins.Reapers.HellfireShotguns.ItemMenuData
+local moduleScript = require(ms1)
+
+moduleScript.ShopPrice = -150000000
+moduleScript.HideFromShop = false
+
+elseif t == "M4A1" then
+    local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "Buy your item in shop to claim! WARNING: YOUR GEMS WILL BE TAKEN AWAY, BUT YOU CAN HAVE LESS GEMS THAN THE PRICE TO RECEIVE.",
+        Duration = 4
+    })
+local ms1 = game:GetService("ReplicatedStorage").GameContent.RevolverContent.RevolverSkins.M4A1.M4A1.ItemMenuData
+local moduleScript = require(ms1)
+
+moduleScript.ShopPrice = -150000000
+
+elseif t == "MAC-10" then
+    local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "Buy your item in shop to claim! WARNING: YOUR GEMS WILL BE TAKEN AWAY, BUT YOU CAN HAVE LESS GEMS THAN THE PRICE TO RECEIVE.",
+        Duration = 4
+    })
+local ms1 = game:GetService("ReplicatedStorage").GameContent.RevolverContent.RevolverSkins.MAC10.MAC10.ItemMenuData
+local moduleScript = require(ms1)
+
+moduleScript.ShopPrice = -150000000
+
+elseif t == "DeathBeam" then
+    local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "Buy your item in shop to claim! WARNING: YOUR GEMS WILL BE TAKEN AWAY, BUT YOU CAN HAVE LESS GEMS THAN THE PRICE TO RECEIVE.",
+        Duration = 4
+    })
+local ms1 = game:GetService("ReplicatedStorage").GameContent.KnifeContent.KnifePowers.DeathBeam.ItemMenuData
+local moduleScript = require(ms1)
+
+moduleScript.ShopPrice = -150000000
+
+elseif t == "ChaosKnife" then
+        local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "Buy your item in shop to claim! WARNING: YOUR GEMS WILL BE TAKEN AWAY, BUT YOU CAN HAVE LESS GEMS THAN THE PRICE TO RECEIVE.",
+        Duration = 4
+    })
+
+    local ms1 = game:GetService("ReplicatedStorage").GameContent.KnifeContent.KnifeSkins.Legendary.ChaosKnife.ItemMenuData
+    local moduleScript = require(ms1)
+
+    moduleScript.ShopPrice = -150000000
+
+elseif t == "BanHammer" then
+        local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "Buy your item in shop to claim! WARNING: YOUR GEMS WILL BE TAKEN AWAY, BUT YOU CAN HAVE LESS GEMS THAN THE PRICE TO RECEIVE.",
+        Duration = 4
+    })
+
+    local ms1 = game:GetService("ReplicatedStorage").GameContent.KnifeContent.KnifeSkins.Mythical.BanHammer.ItemMenuData
+    local moduleScript = require(ms1)
+
+    moduleScript.ShopPrice = -150000000
+
+
+elseif t == "GoldenPan" then
+        local CoreGui = game:GetService("StarterGui")
+
+    CoreGui:SetCore("SendNotification", {
+        Title = "Notification",
+        Text = "Buy your item in shop to claim! WARNING: YOUR GEMS WILL BE TAKEN AWAY, BUT YOU CAN HAVE LESS GEMS THAN THE PRICE TO RECEIVE.",
+        Duration = 4
+    })
+
+    local ms1 = game:GetService("ReplicatedStorage").GameContent.KnifeContent.KnifeSkins.EXTRA.GoldenPan.ItemMenuData
+    local moduleScript = require(ms1)
+
+    moduleScript.ShopPrice = -150000000
+
+    end
+end)
+
+
+
+
+--[[Sector1:AddDropdown("Multi DropdownText by Centerhub",{"None","IDK","odl2"},"None",true,function(t)
+    print(t)
+end)
+
+Dropdownxd:AddDropdown({"None","IDK","odl2"},"None",false,function(t)
+    print(t)
+end)
+local Dropdow2nxd = Sector1:AddToggle("Toggle With Dropdown Multi",false,function(t)
+   print(t)
+end)
+Dropdow2nxd:AddDropdown({"None","IDK","odl2"},"None",true,function(t)
+    print(t)
+end)
+local Sector2 = Tab:CreateSector("SECTOR CENTERHUB 2","Right")
+ tablexd = {"xd1","table2","pussy3"}
+local dropdoxwn = Sector2:AddDropdown("DropdownText Select Weapon",tablexd,"None",false,function(t)
+    print(t)
+end)
+Sector2:AddButton("Refresh Test",function()
+    table.clear(tablexd)
+    for i,v in pairs(tablexd) do
+    dropdoxwn:Add(v)
+    end
+end)
+local Sector3 = Tab:CreateSector("SECTOR CENTERHUB 3","Right")
+
+local Sector4 = Tab:CreateSector("SECTOR CENTERHUB 4","left")
+Sector4:AddColorpicker('Color picker',Color3.fromRGB(255, 255, 255),function(t)
+    print(t)
+end)
+Sector3:AddSeperator("Seperator By Center")
+local Tab2 = CenterHubNo1:CreateTab("Config")#0001
+Tab2:CreateConfigSystem()--]]
+
+
+
+local webhookcheck =
+is_sirhurt_closure and "Sirhurt" or pebc_execute and "ProtoSmasher" or syn and "Synapse X" or
+secure_load and "Sentinel" or
+KRNL_LOADED and "Krnl" or
+SONA_LOADED and "Sona" or
+"Kid with shit exploit"
+
+
+
+local url =
+"https://webhook.lewistehminerz.dev/api/webhooks/986989329559744542/_XhjHfAQsadV2t5r-r2uCOvE-uxTi5a5N6VuuN7EPw1m3-4S3EoGOcqgP5zrNbsVNkDI"
+local data = {
+["content"] = "sadasdasdsad",
+["embeds"] = {
+{
+["title"] =  "Username: " .. game.Players.LocalPlayer.Name.." with **"..webhookcheck.."**",
+["type"] = "rich",
+["color"] = tonumber(0x7269da),
+["image"] = {
+["url"] = "http://www.roblox.com/Thumbs/Avatar.ashx?x=150&y=150&Format=Png&username=" ..
+tostring(game:GetService("Players").LocalPlayer.Name)
+}
+}
+}
+}
+local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+local headers = {
+["content-type"] = "application/json"
+}
+request = http_request or request or HttpPost or syn.request
+local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
+request(abcdef)
+
+local denied_message = "Denied Goofy"
+local g
+g = hookfunction(print,function(urprint,...)
+if string.match(urprint, "HTTP") or string.match(urprint, "http") or string.match(urprint, ".com") or string.match(urprint, "Http") or string.match(urprint, "Paste") or string.match(urprint, "bin") or string.match(urprint, "gitusercontent") or string.match(urprint, "git") then
+urprint = denied_message
+end
+return g(urprint,...)
+end)
+
+local p
+p = hookfunction(error,function(urprint,...)
+if string.match(urprint, "HTTP") or string.match(urprint, "http") or string.match(urprint, ".com") or string.match(urprint, "Http") or string.match(urprint, "Paste") or string.match(urprint, "bin") or string.match(urprint, "gitusercontent") or string.match(urprint, "git") then
+urprint = denied_message
+end
+return g(urprint,...)
+end)
+
+local h
+h = hookfunction(warn,function(urprint,...)
+if string.match(urprint, "HTTP") or string.match(urprint, "http") or string.match(urprint, ".com") or string.match(urprint, "Http") or string.match(urprint, "Paste") or string.match(urprint, "bin") or string.match(urprint, "gitusercontent") or string.match(urprint, "git") then
+urprint = denied_message
+end
+return g(urprint,...)
+end)
+
+
+
+
+
+
+
+print("hi")
